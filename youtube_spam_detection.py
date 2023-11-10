@@ -38,27 +38,26 @@ train_data, test_data, train_labels, test_labels = train_test_split(
 )
 
 # Tokenize the comments
-max_words = 10000  # Adjust as needed
+max_words = 10000  
 tokenizer = Tokenizer(num_words=max_words, oov_token='<OOV>')
 tokenizer.fit_on_texts(train_data)
 
-# Convert comments to sequences
+# Converting comments to sequences
 train_sequences = tokenizer.texts_to_sequences(train_data)
 test_sequences = tokenizer.texts_to_sequences(test_data)
 
-# Pad sequences for uniform length
-max_length = 100  # Adjust as needed
+max_length = 100 
 train_padded = pad_sequences(train_sequences, maxlen=max_length, padding='post', truncating='post')
 test_padded = pad_sequences(test_sequences, maxlen=max_length, padding='post', truncating='post')
 
 # Build the model
-embedding_dim = 16  # Adjust as needed
+embedding_dim = 16 
 model = Sequential([
     Embedding(input_dim=max_words, output_dim=embedding_dim, input_length=max_length),
-    LSTM(128, activation='sigmoid', return_sequences=True),  # ReLU activation added
-    Dropout(0.5),  # Dropout for regularization
+    LSTM(128, activation='sigmoid', return_sequences=True),
+    Dropout(0.5), 
     LSTM(64, activation='sigmoid'),
-    Dense(32, activation='sigmoid'),  # Additional dense layer with ReLU activation
+    Dense(32, activation='sigmoid'),
     Dense(1, activation='sigmoid')
 ])
 
@@ -88,17 +87,15 @@ def real_time_detection(comment):
     prediction = predict_spam(comment)
     print(f"Comment: {comment}\nPrediction: {prediction}")
 
-# Create a text input widget
+# Create a text input
 comment_input = widgets.Textarea(description='Enter comment:', value='')
 
-# Define a callback function
 def on_submit(b):
     real_time_detection(comment_input.value)
 
-# Create a button to submit the comment
+
 submit_button = widgets.Button(description='Submit')
 submit_button.on_click(on_submit)
 
-# Display widgets
 display(comment_input)
 display(submit_button)
